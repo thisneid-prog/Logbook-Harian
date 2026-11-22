@@ -124,7 +124,7 @@
 
     <div class="kontrol-panel no-print">
         <h3 style="margin-top:0;">Panel Input Kegiatan</h3>
-        <!-- LANGKAH 1: Mengubah type="text" menjadi type="date" pada input di bawah ini -->
+        <!-- Kode yang diperbarui: type="date" memunculkan kalender -->
         <input type="date" id="in-tanggal" style="font-family: Arial;">
         <input type="text" id="in-waktu" placeholder="Waktu (Misal: 08.00)" style="width: 120px;">
         <input type="text" id="in-deskripsi" placeholder="Deskripsi Kegiatan" style="width: 300px;">
@@ -155,7 +155,6 @@
                     <th style="width: 45%;">Deskripsi Kegiatan</th>
                     <th style="width: 10%;">Produk</th>
                     <th style="width: 10%;">ket</th>
-                    <th class="no-print" style="width: 5%;">Aksi</th>
                 </tr>
             </thead>
             <tbody id="tabel-body">
@@ -211,7 +210,6 @@
         }
 
         function tambahKegiatan() {
-            // Mengambil nilai asli dari input kalender (Format: YYYY-MM-DD)
             const rawTanggal = document.getElementById('in-tanggal').value;
             const waktu = document.getElementById('in-waktu').value;
             const deskripsi = document.getElementById('in-deskripsi').value;
@@ -223,14 +221,11 @@
                 return;
             }
 
-            // LANGKAH 2: Memformat tanggal agar menjadi DD/MM/YYYY
+            // Memproses nilai kalender (YYYY-MM-DD) menjadi (DD/MM/YYYY)
             let tanggalFormat = '';
             if (rawTanggal) {
-                // Memecah teks berdasarkan tanda hubung (-)
-                const bagian = rawTanggal.split('-'); 
-                // bagian[0] adalah Tahun, bagian[1] adalah Bulan, bagian[2] adalah Tanggal
-                // Menyusunnya kembali dengan garis miring (/)
-                tanggalFormat = `${bagian[2]}/${bagian[1]}/${bagian[0]}`;
+                const bagian = rawTanggal.split('-'); // Memecah tanggal berdasarkan tanda hubung
+                tanggalFormat = `${bagian[2]}/${bagian[1]}/${bagian[0]}`; // Menyusun ulang
             }
 
             dataKegiatan.push({
@@ -241,10 +236,8 @@
                 ket: ket
             });
 
-            // Mengosongkan form (Kecuali tanggal dan waktu agar lebih cepat jika menginput banyak data di hari yang sama)
             document.getElementById('in-deskripsi').value = '';
             document.getElementById('in-ket').value = '';
-
             perbaruiTabel();
         }
 
@@ -253,7 +246,6 @@
             perbaruiTabel();
         }
         
-        // Data contoh
         dataKegiatan.push({
             tanggal: '15/09/2026',
             waktu: '08.00',
