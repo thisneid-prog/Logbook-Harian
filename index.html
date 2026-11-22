@@ -3,307 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Log Harian</title>
-    <!-- Memuat Tailwind CSS untuk desain modern dan responsif -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Memuat font Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Laporan Harian PPL</title>
     <style>
+        /* Tampilan dasar halaman (luar dokumen) */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif; /* Font resmi standar makalah */
+            background-color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        /* Aturan khusus untuk pencetakan (Print) */
+
+        /* Panel Kendali untuk menambah data (Disembunyikan saat dicetak) */
+        .kontrol-panel {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 210mm; /* Menyamakan lebar dengan kertas */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+        
+        .kontrol-panel input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .kontrol-panel button {
+            padding: 8px 15px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .kontrol-panel button.print-btn { background-color: #2196F3; }
+        .kontrol-panel button:hover { opacity: 0.8; }
+
+        /* Tampilan Kertas Dokumen (Meniru A4) */
+        .kertas-dokumen {
+            background: white;
+            width: 210mm;      /* Lebar standar A4 */
+            min-height: 297mm; /* Tinggi standar A4 */
+            padding: 20mm;     /* Jarak margin dalam kertas */
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+        }
+
+        /* Desain Judul */
+        .judul {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-bottom: 30px;
+        }
+
+        /* Desain Informasi Mahasiswa (Grid agar rapi) */
+        .info-header {
+            display: grid;
+            grid-template-columns: 100px 15px auto; /* Kolom: Label, Titik Dua, Isi */
+            row-gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        /* Memberi warna latar transparan saat teks bisa diedit agar pengguna tahu */
+        [contenteditable="true"]:hover {
+            background-color: #ffffcc;
+            cursor: text;
+        }
+
+        /* Desain Tabel Utama */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            vertical-align: top;
+        }
+        
+        /* Meratakan teks deskripsi ke kiri seperti pada gambar */
+        .teks-kiri { text-align: left; }
+
+        /* Desain Tombol Aksi dalam tabel */
+        .btn-aksi {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Desain Area Tanda Tangan */
+        .tanda-tangan {
+            display: flex;
+            justify-content: space-between; /* Memisah ke kiri dan kanan */
+            margin-top: 30px;
+            text-align: center;
+        }
+        .ttd-box { width: 250px; }
+        .ttd-spasi { margin-top: 80px; } /* Jarak untuk tanda tangan basah */
+
+        /* ATURAN PENCETAKAN (Print) */
         @media print {
-            .no-print {
-                display: none !important;
+            .no-print { display: none !important; } /* Sembunyikan tombol & panel */
+            body { background: white; padding: 0; margin: 0; }
+            .kertas-dokumen { 
+                box-shadow: none; 
+                width: 100%; 
+                padding: 10mm; /* Sesuaikan margin saat mencetak */
             }
-            body {
-                background-color: white !important;
-            }
-            .print-container {
-                box-shadow: none !important;
-                border: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                max-width: 100% !important;
-            }
-            table th, table td {
-                border: 1px solid #e5e7eb !important;
-            }
+            [contenteditable="true"]:hover { background-color: transparent; }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+<body>
 
-    <!-- Kontainer Utama -->
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 print-container">
+    <!-- PANEL KENDALI (Tidak ikut tercetak) -->
+    <div class="kontrol-panel no-print">
+        <h3 style="margin-top:0;">Panel Input Kegiatan</h3>
+        <input type="text" id="in-tanggal" placeholder="Hari/Tanggal (Misal: 15/09/2026)">
+        <input type="text" id="in-waktu" placeholder="Waktu (Misal: 08.00)" style="width: 120px;">
+        <input type="text" id="in-deskripsi" placeholder="Deskripsi Kegiatan" style="width: 300px;">
+        <input type="text" id="in-produk" placeholder="Produk (Misal: Selesai)" value="Selesai" style="width: 120px;">
+        <input type="text" id="in-ket" placeholder="Keterangan" style="width: 120px;">
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Buku Log Harian</h1>
-                <p class="text-slate-500 mt-1">Catat aktivitas dan kegiatan harian Anda.</p>
-            </div>
-            <button onclick="window.print()" class="no-print bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                Cetak Log
-            </button>
-        </div>
-
-        <!-- Area Form (Disembunyikan saat cetak) -->
-        <div class="no-print bg-slate-50 rounded-xl p-5 border border-slate-100 mb-8">
-            <h2 class="text-lg font-semibold text-slate-800 mb-4" id="form-title">Tambah Log Baru</h2>
-            
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="w-full md:w-1/3">
-                    <label for="tanggal" class="block text-sm font-medium text-slate-600 mb-1">Tanggal</label>
-                    <input type="date" id="tanggal" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
-                </div>
-                <div class="w-full md:w-2/3">
-                    <label for="kegiatan" class="block text-sm font-medium text-slate-600 mb-1">Kegiatan</label>
-                    <div class="flex flex-col md:flex-row gap-3">
-                        <input type="text" id="kegiatan" placeholder="Masukkan deskripsi kegiatan..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
-                        <button id="btn-submit" onclick="simpanLog()" class="shrink-0 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors">
-                            Tambah Log
-                        </button>
-                        <button id="btn-cancel" onclick="batalEdit()" class="hidden shrink-0 bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2.5 rounded-lg font-medium transition-colors">
-                            Batal
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <!-- Pesan Error -->
-            <p id="error-msg" class="text-red-500 text-sm mt-2 hidden">Harap lengkapi tanggal dan kegiatan!</p>
-        </div>
-
-        <!-- Tabel Log -->
-        <div class="overflow-x-auto rounded-xl border border-slate-200">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200">
-                        <th class="px-6 py-4 font-semibold text-slate-700 w-1/4">Tanggal</th>
-                        <th class="px-6 py-4 font-semibold text-slate-700">Kegiatan</th>
-                        <th class="px-6 py-4 font-semibold text-slate-700 w-32 no-print text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="tabel-log" class="divide-y divide-slate-200">
-                    <!-- Data log akan dirender di sini oleh JavaScript -->
-                </tbody>
-            </table>
-            
-            <!-- Keadaan Kosong (Empty State) -->
-            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
-                <svg class="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                <p class="text-slate-500 font-medium">Belum ada log kegiatan.</p>
-                <p class="text-slate-400 text-sm">Tambahkan kegiatan pertama Anda melalui form di atas.</p>
-            </div>
-        </div>
+        <br>
+        <button onclick="tambahKegiatan()">+ Tambah Baris Kegiatan</button>
+        <button onclick="window.print()" class="print-btn">🖨️ Cetak Dokumen</button>
+        <p style="font-size: 12px; color: #555; margin-bottom: 0;">
+            <em>*Tips: Anda dapat mengubah Nama, NIM, dan Tanda tangan dengan mengeklik langsung pada teks di dokumen kertas di bawah.</em>
+        </p>
     </div>
 
-    <!-- Modal Konfirmasi Hapus -->
-    <div id="delete-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300" id="modal-content">
-            <div class="p-6 text-center">
-                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+    <!-- HALAMAN DOKUMEN -->
+    <div class="kertas-dokumen">
+        <div class="judul">LEMBAR LAPORAN HARIAN MAHASISWA PPL</div>
+
+        <div class="info-header">
+            <div>Nama</div><div>:</div><div contenteditable="true" id="hdr-nama">Munadi Anwar</div>
+            <div>NIM</div><div>:</div><div contenteditable="true" id="hdr-nim">192023020</div>
+            <div>Prodi</div><div>:</div><div contenteditable="true" id="hdr-prodi">Manajemen Pendidikan Islam</div>
+            <div>Tempat PPL</div><div>:</div><div contenteditable="true" id="hdr-tempat">MIN 17 ACEH BARAT</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 15%;">Hari/Tanggal</th>
+                    <th style="width: 10%;">Waktu</th>
+                    <th style="width: 45%;">Deskripsi Kegiatan</th>
+                    <th style="width: 10%;">Produk</th>
+                    <th style="width: 10%;">ket</th>
+                    <th class="no-print" style="width: 5%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="tabel-body">
+                <!-- Baris tabel akan ditambahkan di sini oleh JavaScript -->
+            </tbody>
+        </table>
+
+        <div class="tanda-tangan">
+            <!-- Tanda Tangan Kiri -->
+            <div class="ttd-box">
+                <div contenteditable="true">
+                    Mengetahui,<br>
+                    Kepala MIN 17 Aceh Barat
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Hapus Log?</h3>
-                <p class="text-slate-500 mb-6">Tindakan ini tidak dapat dibatalkan. Log akan dihapus secara permanen.</p>
-                <div class="flex gap-3 justify-center">
-                    <button onclick="tutupModalHapus()" class="w-full px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors">Batal</button>
-                    <button id="btn-confirm-delete" class="w-full px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">Hapus</button>
+                <div class="ttd-spasi contenteditable-true" contenteditable="true">
+                    <b>H. MUZAKAR, S.Ag.</b><br>
+                    NIP. 197306061999051001
+                </div>
+            </div>
+
+            <!-- Tanda Tangan Kanan -->
+            <div class="ttd-box">
+                <div contenteditable="true">
+                    Meulaboh, <span id="tgl-cetak">17 September 2026</span><br>
+                    Guru Pamong
+                </div>
+                <div class="ttd-spasi contenteditable-true" contenteditable="true">
+                    <b>AZWAR, A.Ma</b><br>
+                    NIP. 197407162007101000
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- JAVASCRIPT: Logika Aplikasi -->
     <script>
-        // Inisialisasi Data dari Local Storage
-        let logs = JSON.parse(localStorage.getItem('bukuLogHarian')) || [];
-        let editIndex = -1; // -1 berarti mode tambah baru, angka lain berarti mode edit indeks ke-n
-        let hapusIndex = -1; // Menyimpan indeks yang akan dihapus saat modal terbuka
+        // Array untuk menyimpan data kegiatan
+        let dataKegiatan = [];
 
-        // Referensi Elemen DOM
-        const inputTanggal = document.getElementById('tanggal');
-        const inputKegiatan = document.getElementById('kegiatan');
-        const btnSubmit = document.getElementById('btn-submit');
-        const btnCancel = document.getElementById('btn-cancel');
-        const formTitle = document.getElementById('form-title');
-        const errorMsg = document.getElementById('error-msg');
-        const tabelLog = document.getElementById('tabel-log');
-        const emptyState = document.getElementById('empty-state');
-        const deleteModal = document.getElementById('delete-modal');
-        const modalContent = document.getElementById('modal-content');
-        const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+        // Fungsi untuk merender ulang isi tabel berdasarkan dataKegiatan
+        function perbaruiTabel() {
+            const tbody = document.getElementById('tabel-body');
+            tbody.innerHTML = ''; // Kosongkan tabel saat ini
 
-        // Fungsi Memformat Tanggal agar lebih mudah dibaca (Opsional tapi bagus untuk UI)
-        function formatTanggal(tanggalString) {
-            if (!tanggalString) return '';
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const date = new Date(tanggalString);
-            return date.toLocaleDateString('id-ID', options);
-        }
-
-        // Fungsi Menampilkan Data ke Tabel
-        function renderTabel() {
-            tabelLog.innerHTML = ''; // Bersihkan tabel
-            
-            if (logs.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-            } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
+            dataKegiatan.forEach((item, index) => {
+                const tr = document.createElement('tr');
                 
-                logs.forEach((log, index) => {
-                    const row = document.createElement('tr');
-                    row.className = "hover:bg-slate-50 transition-colors group";
-                    
-                    row.innerHTML = `
-                        <td class="px-6 py-4 text-slate-700 whitespace-nowrap">
-                            <span class="font-medium">${formatTanggal(log.tanggal)}</span>
-                            <br>
-                            <span class="text-xs text-slate-400">${log.tanggal}</span>
-                        </td>
-                        <td class="px-6 py-4 text-slate-800">${log.kegiatan}</td>
-                        <td class="px-6 py-4 no-print text-center">
-                            <div class="flex justify-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="siapkanEdit(${index})" class="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors" title="Edit">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                </button>
-                                <button onclick="bukaModalHapus(${index})" class="p-2 text-red-600 hover:bg-red-100 rounded-md transition-colors" title="Hapus">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    tabelLog.appendChild(row);
-                });
-            }
+                tr.innerHTML = `
+                    <td>${index + 1}</td> <!-- Nomor berurut otomatis -->
+                    <td>${item.tanggal}</td>
+                    <td>${item.waktu}</td>
+                    <td class="teks-kiri">${item.deskripsi}</td>
+                    <td>${item.produk}</td>
+                    <td>${item.ket}</td>
+                    <td class="no-print">
+                        <button class="btn-aksi" onclick="hapusBaris(${index})">Hapus</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        // Fungsi Menyimpan (Tambah Baru atau Update Edit)
-        function simpanLog() {
-            const valTanggal = inputTanggal.value;
-            const valKegiatan = inputKegiatan.value.trim();
+        // Fungsi untuk mengambil data dari panel input dan memasukkannya ke tabel
+        function tambahKegiatan() {
+            const tanggal = document.getElementById('in-tanggal').value;
+            const waktu = document.getElementById('in-waktu').value;
+            const deskripsi = document.getElementById('in-deskripsi').value;
+            const produk = document.getElementById('in-produk').value;
+            const ket = document.getElementById('in-ket').value;
 
-            // Validasi Input
-            if (valTanggal === '' || valKegiatan === '') {
-                errorMsg.classList.remove('hidden');
-                return; // Hentikan proses jika kosong
-            }
-            errorMsg.classList.add('hidden'); // Sembunyikan error jika sudah valid
-
-            if (editIndex === -1) {
-                // Tambah Log Baru
-                logs.unshift({ tanggal: valTanggal, kegiatan: valKegiatan }); // unshift agar muncul paling atas
-            } else {
-                // Update Log yang sedang diedit
-                logs[editIndex] = { tanggal: valTanggal, kegiatan: valKegiatan };
-                batalEdit(); // Reset form ke mode tambah
+            // Pastikan deskripsi minimal diisi
+            if (deskripsi.trim() === '') {
+                alert("Harap isi deskripsi kegiatan!");
+                return;
             }
 
-            simpanKeLocalStorage();
-            kosongkanForm();
-            renderTabel();
+            // Tambahkan data ke array
+            dataKegiatan.push({
+                tanggal: tanggal,
+                waktu: waktu,
+                deskripsi: deskripsi,
+                produk: produk,
+                ket: ket
+            });
+
+            // Bersihkan form (kecuali produk karena biasanya selalu 'Selesai')
+            document.getElementById('in-tanggal').value = '';
+            document.getElementById('in-waktu').value = '';
+            document.getElementById('in-deskripsi').value = '';
+            document.getElementById('in-ket').value = '';
+
+            perbaruiTabel();
         }
 
-        // Fungsi Menyiapkan Form untuk Edit
-        function siapkanEdit(index) {
-            // Isi form dengan data yang dipilih
-            inputTanggal.value = logs[index].tanggal;
-            inputKegiatan.value = logs[index].kegiatan;
-            
-            // Ubah State
-            editIndex = index;
-            formTitle.innerText = "Edit Log";
-            btnSubmit.innerText = "Simpan Perubahan";
-            btnSubmit.classList.replace('bg-blue-600', 'bg-amber-500');
-            btnSubmit.classList.replace('hover:bg-blue-700', 'hover:bg-amber-600');
-            btnCancel.classList.remove('hidden');
-            
-            // Fokuskan kursor ke input kegiatan dan scroll ke atas
-            inputKegiatan.focus();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Fungsi untuk menghapus baris tabel
+        function hapusBaris(index) {
+            dataKegiatan.splice(index, 1); // Hapus 1 item dari array
+            perbaruiTabel(); // Perbarui tampilan tabel
         }
-
-        // Fungsi Membatalkan Mode Edit
-        function batalEdit() {
-            editIndex = -1;
-            formTitle.innerText = "Tambah Log Baru";
-            btnSubmit.innerText = "Tambah Log";
-            btnSubmit.classList.replace('bg-amber-500', 'bg-blue-600');
-            btnSubmit.classList.replace('hover:bg-amber-600', 'hover:bg-blue-700');
-            btnCancel.classList.add('hidden');
-            errorMsg.classList.add('hidden');
-            kosongkanForm();
-        }
-
-        // Manajemen Modal Hapus
-        function bukaModalHapus(index) {
-            hapusIndex = index;
-            deleteModal.classList.remove('hidden');
-            // Sedikit delay untuk animasi scale
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
-        }
-
-        function tutupModalHapus() {
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => {
-                deleteModal.classList.add('hidden');
-                hapusIndex = -1;
-            }, 200); // Sesuaikan dengan durasi transisi
-        }
-
-        // Eksekusi Penghapusan
-        btnConfirmDelete.addEventListener('click', () => {
-            if (hapusIndex > -1) {
-                logs.splice(hapusIndex, 1);
-                simpanKeLocalStorage();
-                renderTabel();
-                
-                // Jika data yang dihapus sedang dalam proses edit, batalkan edit
-                if (editIndex === hapusIndex) {
-                    batalEdit();
-                } else if (editIndex > hapusIndex) {
-                    // Sesuaikan indeks edit jika baris sebelumnya dihapus
-                    editIndex--;
-                }
-            }
-            tutupModalHapus();
+        
+        // Opsional: Isi satu data awal sebagai contoh saat pertama dibuka
+        dataKegiatan.push({
+            tanggal: '15/09/2026',
+            waktu: '08.00',
+            deskripsi: 'Pengantaran dan penyerahan mahasiswa PPL kepada pihak MIN 17 Aceh Barat.',
+            produk: 'Selesai',
+            ket: ''
         });
-
-        // Fungsi Utilitas
-        function simpanKeLocalStorage() {
-            localStorage.setItem('bukuLogHarian', JSON.stringify(logs));
-        }
-
-        function kosongkanForm() {
-            inputTanggal.value = '';
-            inputKegiatan.value = '';
-        }
-
-        // Set tanggal default ke hari ini saat halaman dimuat pertama kali
-        function setTanggalHariIni() {
-            const hariIni = new Date().toISOString().split('T')[0];
-            inputTanggal.value = hariIni;
-        }
-
-        // Event listener untuk tombol Enter di input kegiatan
-        inputKegiatan.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                simpanLog();
-            }
-        });
-
-        // Render awal saat aplikasi dimuat
-        setTanggalHariIni();
-        renderTabel();
+        perbaruiTabel();
 
     </script>
 </body>
