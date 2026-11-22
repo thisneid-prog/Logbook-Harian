@@ -5,50 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Harian PPL</title>
     <style>
+        /* Pengaturan Dasar Halaman */
         body {
             font-family: 'Times New Roman', Times, serif;
             background-color: #e0e0e0;
             margin: 0;
-            padding: 20px;
+            padding: 20px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
+        /* Panel Kendali (Form Input) */
         .kontrol-panel {
             background: white;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-            width: 210mm;
+            width: 100%;
+            max-width: 210mm;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             font-family: Arial, sans-serif;
             box-sizing: border-box;
         }
         
         .kontrol-panel input {
-            padding: 8px;
-            margin: 5px;
+            padding: 10px;
+            margin: 5px 0;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
         }
 
         .kontrol-panel button {
-            padding: 8px 15px;
-            margin: 5px;
+            padding: 10px 15px;
+            margin: 5px 0;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            width: 100%;
         }
 
         .kontrol-panel button.print-btn { background-color: #2196F3; }
         .kontrol-panel button:hover { opacity: 0.8; }
 
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .input-group input { width: auto; flex: 1; }
+
+        /* Kertas Dokumen */
         .kertas-dokumen {
             background: white;
-            width: 210mm;
+            width: 100%;
+            max-width: 210mm;
             min-height: 297mm;
             padding: 20mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
@@ -74,10 +89,17 @@
             cursor: text;
         }
 
+        /* Tabel Data */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 40px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 40px;
+            min-width: 600px;
         }
         
         th, td {
@@ -99,23 +121,37 @@
             font-size: 12px;
         }
 
+        /* Tanda Tangan */
         .tanda-tangan {
             display: flex;
             justify-content: space-between;
             margin-top: 30px;
             text-align: center;
         }
-        .ttd-box { width: 250px; }
+        .ttd-box { width: 200px; }
         .ttd-spasi { margin-top: 80px; }
 
+        /* Tampilan Mobile */
+        @media (max-width: 768px) {
+            .kertas-dokumen { padding: 10px; }
+            .info-header { grid-template-columns: 80px 10px auto; font-size: 14px; }
+            .input-group { flex-direction: column; }
+            .input-group input { width: 100%; }
+            .tanda-tangan { flex-direction: column; align-items: center; gap: 50px; }
+        }
+
+        /* Tampilan Cetak */
         @media print {
             .no-print { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .kertas-dokumen { 
                 box-shadow: none; 
-                width: 100%; 
-                padding: 10mm;
+                width: 210mm;
+                max-width: none;
+                padding: 20mm;
             }
+            table { min-width: 100%; } 
+            .tanda-tangan { flex-direction: row; gap: 0; }
             [contenteditable="true"]:hover { background-color: transparent; }
         }
     </style>
@@ -124,13 +160,15 @@
 
     <div class="kontrol-panel no-print">
         <h3 style="margin-top:0;">Panel Input Kegiatan</h3>
-        <input type="date" id="in-tanggal" style="font-family: Arial;">
-        <input type="text" id="in-waktu" placeholder="Waktu (Misal: 08.00)" style="width: 120px;">
-        <input type="text" id="in-deskripsi" placeholder="Deskripsi Kegiatan" style="width: 300px;">
-        <input type="text" id="in-produk" placeholder="Produk (Misal: Selesai)" value="Selesai" style="width: 120px;">
-        <input type="text" id="in-ket" placeholder="Keterangan" style="width: 120px;">
         
-        <br>
+        <div class="input-group">
+            <input type="date" id="in-tanggal" style="font-family: Arial;">
+            <input type="text" id="in-waktu" placeholder="Waktu (08.00)">
+            <input type="text" id="in-produk" placeholder="Produk (Selesai)" value="Selesai">
+            <input type="text" id="in-ket" placeholder="Keterangan">
+        </div>
+        <input type="text" id="in-deskripsi" placeholder="Deskripsi Kegiatan (Ketik detail di sini...)" style="width: 100%; margin-bottom: 15px; box-sizing: border-box; padding: 10px;">
+        
         <button onclick="tambahKegiatan()">+ Tambah Baris Kegiatan</button>
         <button onclick="window.print()" class="print-btn">🖨️ Cetak Dokumen</button>
     </div>
@@ -138,6 +176,7 @@
     <div class="kertas-dokumen">
         <div class="judul">LEMBAR LAPORAN HARIAN MAHASISWA PPL</div>
 
+        <!-- Perhatikan: Jika ingin data NAMA dan NIM juga tersimpan, beri tahu saya. Saat ini yang tersimpan otomatis adalah tabel kegiatannya -->
         <div class="info-header">
             <div>Nama</div><div>:</div><div contenteditable="true" id="hdr-nama">Nama Anda</div>
             <div>NIM</div><div>:</div><div contenteditable="true" id="hdr-nim">Nim Anda</div>
@@ -145,21 +184,23 @@
             <div>Tempat PPL</div><div>:</div><div contenteditable="true" id="hdr-tempat">MIN 17 ACEH BARAT</div>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 15%;">Hari/Tanggal</th>
-                    <th style="width: 10%;">Waktu</th>
-                    <th style="width: 45%;">Deskripsi Kegiatan</th>
-                    <th style="width: 10%;">Produk</th>
-                    <th style="width: 10%;">ket</th>
-                    <th class="no-print" style="width: 5%;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="tabel-body">
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 15%;">Hari/Tanggal</th>
+                        <th style="width: 10%;">Waktu</th>
+                        <th style="width: 45%;">Deskripsi Kegiatan</th>
+                        <th style="width: 10%;">Produk</th>
+                        <th style="width: 10%;">ket</th>
+                        <th class="no-print" style="width: 5%;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-body">
+                </tbody>
+            </table>
+        </div>
 
         <div class="tanda-tangan">
             <div class="ttd-box">
@@ -178,7 +219,7 @@
                     Guru Pamong
                 </div>
                 <div class="ttd-spasi contenteditable-true" contenteditable="true">
-                    <b>Pamong Anda</b><br>
+                    <b>Nama Pamong</b><br>
                     NIP. ...
                 </div>
             </div>
@@ -186,8 +227,17 @@
     </div>
 
     <script>
-        let dataKegiatan = [];
+        // LANGKAH 1: Saat aplikasi dibuka, cek apakah ada data tersimpan di Local Storage.
+        // Jika ada, gunakan data itu. Jika tidak ada (baru pertama buka), gunakan array kosong [].
+        let dataKegiatan = JSON.parse(localStorage.getItem('dataLogPPL')) || [];
 
+        // LANGKAH 2: Fungsi khusus untuk menyimpan ke Local Storage
+        function simpanKeLocalStorage() {
+            // Kita mengubah array 'dataKegiatan' menjadi format teks (String) lalu menyimpannya dengan nama kunci 'dataLogPPL'
+            localStorage.setItem('dataLogPPL', JSON.stringify(dataKegiatan));
+        }
+
+        // Fungsi menampilkan tabel ke layar
         function perbaruiTabel() {
             const tbody = document.getElementById('tabel-body');
             tbody.innerHTML = ''; 
@@ -209,6 +259,7 @@
             });
         }
 
+        // Fungsi menambah data
         function tambahKegiatan() {
             const rawTanggal = document.getElementById('in-tanggal').value;
             const waktu = document.getElementById('in-waktu').value;
@@ -221,19 +272,15 @@
                 return;
             }
 
-            // Memproses penamaan hari dan format tanggal
             let tanggalLengkap = '';
             if (rawTanggal) {
-                // 1. Memecah tanggal menjadi DD/MM/YYYY
                 const bagian = rawTanggal.split('-'); 
                 const tanggalFormat = `${bagian[2]}/${bagian[1]}/${bagian[0]}`; 
 
-                // 2. Mencari tahu nama hari
                 const dateObj = new Date(rawTanggal);
                 const daftarHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                const namaHari = daftarHari[dateObj.getDay()]; // getDay() menghasilkan angka 0 (Minggu) sampai 6 (Sabtu)
+                const namaHari = daftarHari[dateObj.getDay()];
 
-                // 3. Menggabungkan nama hari dengan tanggal
                 tanggalLengkap = `${namaHari}, ${tanggalFormat}`;
             }
 
@@ -247,21 +294,37 @@
 
             document.getElementById('in-deskripsi').value = '';
             document.getElementById('in-ket').value = '';
+            
+            // Panggil fungsi simpan setiap kali ada data baru yang masuk
+            simpanKeLocalStorage(); 
             perbaruiTabel();
         }
 
+        // Fungsi menghapus data
         function hapusBaris(index) {
-            dataKegiatan.splice(index, 1);
-            perbaruiTabel();
+            // Meminta konfirmasi sebelum menghapus agar tidak terhapus tidak sengaja
+            if (confirm("Apakah Anda yakin ingin menghapus kegiatan ini?")) {
+                dataKegiatan.splice(index, 1);
+                
+                // Panggil fungsi simpan agar memori ikut terhapus
+                simpanKeLocalStorage(); 
+                perbaruiTabel();
+            }
         }
         
-        dataKegiatan.push({
-            tanggal: 'Selasa, 15/09/2026',
-            waktu: '08.00',
-            deskripsi: 'Pengantaran dan penyerahan mahasiswa PPL kepada pihak MIN 17 Aceh Barat.',
-            produk: 'Selesai',
-            ket: ''
-        });
+        // LANGKAH 3: Memberikan data contoh HANYA jika data kosong (baru pertama kali buka)
+        if (dataKegiatan.length === 0) {
+            dataKegiatan.push({
+                tanggal: 'Selasa, 15/09/2026',
+                waktu: '08.00',
+                deskripsi: 'Pengantaran dan penyerahan mahasiswa PPL kepada pihak MIN 17 Aceh Barat.',
+                produk: 'Selesai',
+                ket: ''
+            });
+            simpanKeLocalStorage(); // Simpan contoh ini ke memori
+        }
+
+        // Jalankan fungsi tampilkan tabel saat halaman pertama selesai dimuat
         perbaruiTabel();
 
     </script>
