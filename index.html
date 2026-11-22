@@ -2,252 +2,260 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Harian PPL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aplikasi Log PPL</title>
     <style>
-        <!-- Menghubungkan manifest -->
-    <link rel="manifest" href="manifest.json">
-    <!-- Mengatur warna tema untuk bar status di HP Android -->
-    <meta name="theme-color" content="#4CAF50">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2965/2965306.png">
-        /* Pengaturan Dasar Halaman */
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #e0e0e0;
-            margin: 0;
-            padding: 20px 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Panel Kendali (Form Input) */
-        .kontrol-panel {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 210mm;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            font-family: Arial, sans-serif;
-            box-sizing: border-box;
-        }
-        
-        .kontrol-panel input {
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .kontrol-panel button {
-            padding: 10px 15px;
-            margin: 5px 0;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .kontrol-panel button.print-btn { background-color: #2196F3; }
-        .kontrol-panel button:hover { opacity: 0.8; }
-
-        .input-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .input-group input { width: auto; flex: 1; }
-
-        /* Kertas Dokumen */
-        .kertas-dokumen {
-            background: white;
-            width: 100%;
-            max-width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            box-sizing: border-box;
-        }
-
-        .judul {
-            text-align: center;
-            font-weight: bold;
-            font-size: 14pt;
-            margin-bottom: 30px;
-        }
-
-        .info-header {
-            display: grid;
-            grid-template-columns: 100px 15px auto;
-            row-gap: 5px;
-            margin-bottom: 20px;
-        }
-        
-        [contenteditable="true"]:hover {
-            background-color: #ffffcc;
-            cursor: text;
-        }
-
-        /* Tabel Data */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            margin-bottom: 40px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-            vertical-align: top;
-        }
-        
-        .teks-kiri { text-align: left; }
-
-        .btn-aksi {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        /* Tanda Tangan */
-        .tanda-tangan {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            text-align: center;
-        }
-        .ttd-box { width: 200px; }
-        .ttd-spasi { margin-top: 80px; }
-
-        /* Tampilan Mobile */
-        @media (max-width: 768px) {
-            .kertas-dokumen { padding: 10px; }
-            .info-header { grid-template-columns: 80px 10px auto; font-size: 14px; }
-            .input-group { flex-direction: column; }
-            .input-group input { width: 100%; }
-            .tanda-tangan { flex-direction: column; align-items: center; gap: 50px; }
-        }
-
-        /* Tampilan Cetak */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; padding: 0; margin: 0; }
-            .kertas-dokumen { 
-                box-shadow: none; 
-                width: 210mm;
-                max-width: none;
-                padding: 20mm;
+        /* ========================================= */
+        /* 1. GAYA UNTUK LAYAR HP (APP INTERFACE)    */
+        /* ========================================= */
+        @media screen {
+            body {
+                font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f0f2f5;
+                margin: 0;
+                padding: 0;
+                padding-top: 60px; /* Jarak untuk header yang fixed */
+                padding-bottom: 80px; /* Jarak agar konten tidak tertutup tombol tambah */
             }
-            table { min-width: 100%; } 
-            .tanda-tangan { flex-direction: row; gap: 0; }
-            [contenteditable="true"]:hover { background-color: transparent; }
+
+            /* Header Aplikasi / App Bar */
+            .app-header {
+                background-color: #1a73e8;
+                color: white;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 16px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                z-index: 100;
+            }
+            .app-header h1 { font-size: 18px; margin: 0; }
+            .btn-header { background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+            /* Wadah Daftar Kartu */
+            .list-container { padding: 16px; }
+
+            /* Desain Kartu (Card) */
+            .card {
+                background: white;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 12px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                position: relative;
+            }
+            .card-header { display: flex; justify-content: space-between; font-size: 12px; color: #5f6368; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 8px;}
+            .card-title { font-size: 14px; color: #202124; margin-bottom: 8px; font-weight: bold; }
+            .card-desc { font-size: 14px; color: #3c4043; line-height: 1.4; margin-bottom: 12px; }
+            .card-footer { display: flex; justify-content: space-between; font-size: 12px; }
+            .badge { background: #e6f4ea; color: #1e8e3e; padding: 2px 8px; border-radius: 12px; }
+            
+            /* Tombol Hapus di dalam Kartu */
+            .btn-hapus-card { background-color: #ffebee; color: #d32f2f; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+            /* Tombol Melayang (Floating Action Button / FAB) */
+            .fab {
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                background-color: #1a73e8;
+                color: white;
+                width: 56px;
+                height: 56px;
+                border-radius: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                cursor: pointer;
+                border: none;
+                z-index: 100;
+            }
+
+            /* Jendela Pop-up Modal untuk Form Input */
+            .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+            .modal-content { background: white; width: 100%; max-width: 400px; border-radius: 8px; padding: 20px; box-sizing: border-box; }
+            .modal-content h3 { margin-top: 0; margin-bottom: 16px; }
+            .form-group { margin-bottom: 12px; }
+            .form-group label { display: block; font-size: 12px; color: #5f6368; margin-bottom: 4px; }
+            .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+            .form-group textarea { height: 80px; resize: none; }
+            
+            .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+            .btn-batal { background: transparent; color: #5f6368; border: none; padding: 10px 16px; cursor: pointer; font-weight: bold; }
+            .btn-simpan { background: #1a73e8; color: white; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+            /* Sembunyikan format dokumen saat di layar HP */
+            .print-only { display: none !important; }
+        }
+
+        /* ========================================= */
+        /* 2. GAYA UNTUK KERTAS CETAK (DOCUMENT)     */
+        /* ========================================= */
+        @media print {
+            /* Sembunyikan antarmuka aplikasi mobile saat dicetak */
+            .screen-only { display: none !important; }
+
+            body { font-family: 'Times New Roman', Times, serif; background: white; margin: 0; padding: 0; }
+            
+            .kertas-dokumen { width: 100%; padding: 10mm 20mm; box-sizing: border-box; }
+            .judul { text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 30px; }
+            .info-header { display: grid; grid-template-columns: 100px 15px auto; row-gap: 5px; margin-bottom: 20px; }
+            
+            table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+            th, td { border: 1px solid black; padding: 8px; text-align: center; vertical-align: top; }
+            .teks-kiri { text-align: left; }
+            
+            .tanda-tangan { display: flex; justify-content: space-between; margin-top: 30px; text-align: center; }
+            .ttd-box { width: 200px; }
+            .ttd-spasi { margin-top: 80px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="kontrol-panel no-print">
-        <h3 style="margin-top:0;">Panel Input Kegiatan</h3>
-        
-        <div class="input-group">
-            <input type="date" id="in-tanggal" style="font-family: Arial;">
-            <input type="text" id="in-waktu" placeholder="Waktu (08.00)">
-            <input type="text" id="in-produk" placeholder="Produk (Selesai)" value="Selesai">
-            <input type="text" id="in-ket" placeholder="Keterangan">
+    <!-- ========================================= -->
+    <!-- BAGIAN 1: ANTARMUKA APLIKASI (LAYAR HP)   -->
+    <!-- ========================================= -->
+    <div class="screen-only">
+        <!-- Header Atas -->
+        <header class="app-header">
+            <h1>Log PPL Saya</h1>
+            <button class="btn-header" onclick="window.print()">🖨️ Cetak</button>
+        </header>
+
+        <!-- Daftar Kartu Kegiatan -->
+        <main class="list-container" id="app-list">
+            <!-- Kartu akan dibuat otomatis oleh JavaScript di sini -->
+        </main>
+
+        <!-- Tombol Tambah (+) Melayang -->
+        <button class="fab" onclick="bukaModal()">+</button>
+
+        <!-- Pop-up Form Tambah Data -->
+        <div class="modal-overlay" id="modal-form">
+            <div class="modal-content">
+                <h3>Tambah Kegiatan Baru</h3>
+                
+                <div class="form-group">
+                    <label>Tanggal</label>
+                    <input type="date" id="in-tanggal">
+                </div>
+                <div class="form-group">
+                    <label>Waktu (Contoh: 08.00)</label>
+                    <input type="text" id="in-waktu">
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Kegiatan</label>
+                    <textarea id="in-deskripsi" placeholder="Ketik apa yang Anda lakukan hari ini..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Produk</label>
+                        <input type="text" id="in-produk" value="Selesai">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Keterangan</label>
+                        <input type="text" id="in-ket" placeholder="-">
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-batal" onclick="tutupModal()">Batal</button>
+                    <button class="btn-simpan" onclick="tambahKegiatan()">Simpan Data</button>
+                </div>
+            </div>
         </div>
-        <input type="text" id="in-deskripsi" placeholder="Deskripsi Kegiatan (Ketik detail di sini...)" style="width: 100%; margin-bottom: 15px; box-sizing: border-box; padding: 10px;">
-        
-        <button onclick="tambahKegiatan()">+ Tambah Baris Kegiatan</button>
-        <button onclick="window.print()" class="print-btn">🖨️ Cetak Dokumen</button>
     </div>
 
-    <div class="kertas-dokumen">
+    <!-- ========================================= -->
+    <!-- BAGIAN 2: ANTARMUKA DOKUMEN (CETAK A4)    -->
+    <!-- ========================================= -->
+    <div class="print-only kertas-dokumen">
         <div class="judul">LEMBAR LAPORAN HARIAN MAHASISWA PPL</div>
 
-        <!-- Perhatikan: Jika ingin data NAMA dan NIM juga tersimpan, beri tahu saya. Saat ini yang tersimpan otomatis adalah tabel kegiatannya -->
         <div class="info-header">
-            <div>Nama</div><div>:</div><div contenteditable="true" id="hdr-nama">Nama Anda</div>
-            <div>NIM</div><div>:</div><div contenteditable="true" id="hdr-nim">Nim Anda</div>
-            <div>Prodi</div><div>:</div><div contenteditable="true" id="hdr-prodi">Prodi Anda</div>
-            <div>Tempat PPL</div><div>:</div><div contenteditable="true" id="hdr-tempat">MIN 17 ACEH BARAT</div>
+            <div>Nama</div><div>:</div><div contenteditable="true">Nama Anda</div>
+            <div>NIM</div><div>:</div><div contenteditable="true">Nim Anda</div>
+            <div>Prodi</div><div>:</div><div contenteditable="true">Prodi Anda</div>
+            <div>Tempat PPL</div><div>:</div><div contenteditable="true">MIN 17 ACEH BARAT</div>
         </div>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">No</th>
-                        <th style="width: 15%;">Hari/Tanggal</th>
-                        <th style="width: 10%;">Waktu</th>
-                        <th style="width: 45%;">Deskripsi Kegiatan</th>
-                        <th style="width: 10%;">Produk</th>
-                        <th style="width: 10%;">ket</th>
-                        <th class="no-print" style="width: 5%;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="tabel-body">
-                </tbody>
-            </table>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 15%;">Hari/Tanggal</th>
+                    <th style="width: 10%;">Waktu</th>
+                    <th style="width: 50%;">Deskripsi Kegiatan</th>
+                    <th style="width: 10%;">Produk</th>
+                    <th style="width: 10%;">ket</th>
+                </tr>
+            </thead>
+            <tbody id="print-tabel-body">
+                <!-- Baris tabel akan dibuat otomatis oleh JavaScript di sini -->
+            </tbody>
+        </table>
 
         <div class="tanda-tangan">
             <div class="ttd-box">
-                <div contenteditable="true">
-                    Mengetahui,<br>
-                    Kepala MIN 17 Aceh Barat
-                </div>
-                <div class="ttd-spasi contenteditable-true" contenteditable="true">
-                    <b>H. MUZAKAR, S.Ag.</b><br>
-                    NIP. 197306061999051001
-                </div>
+                <div contenteditable="true">Mengetahui,<br>Kepala MIN 17 Aceh Barat</div>
+                <div class="ttd-spasi contenteditable-true" contenteditable="true"><b>H. MUZAKAR, S.Ag.</b><br>NIP. 197306061999051001</div>
             </div>
             <div class="ttd-box">
-                <div contenteditable="true">
-                    Meulaboh, <span contenteditable="true">17 September 2026</span><br>
-                    Guru Pamong
-                </div>
-                <div class="ttd-spasi contenteditable-true" contenteditable="true">
-                    <b>Nama Pamong</b><br>
-                    NIP. ...
-                </div>
+                <div contenteditable="true">Meulaboh, <span contenteditable="true">17 September 2026</span><br>Guru Pamong</div>
+                <div class="ttd-spasi contenteditable-true" contenteditable="true"><b>Pamong Anda</b><br>NIP. </div>
             </div>
         </div>
     </div>
 
+    <!-- ========================================= -->
+    <!-- JAVASCRIPT: LOGIKA APLIKASI               -->
+    <!-- ========================================= -->
     <script>
-        // LANGKAH 1: Saat aplikasi dibuka, cek apakah ada data tersimpan di Local Storage.
-        // Jika ada, gunakan data itu. Jika tidak ada (baru pertama buka), gunakan array kosong [].
+        // 1. Ambil memori (Local Storage)
         let dataKegiatan = JSON.parse(localStorage.getItem('dataLogPPL')) || [];
 
-        // LANGKAH 2: Fungsi khusus untuk menyimpan ke Local Storage
-        function simpanKeLocalStorage() {
-            // Kita mengubah array 'dataKegiatan' menjadi format teks (String) lalu menyimpannya dengan nama kunci 'dataLogPPL'
-            localStorage.setItem('dataLogPPL', JSON.stringify(dataKegiatan));
-        }
+        // 2. Fungsi Utama untuk merender ulang Layar dan Kertas Cetak
+        function renderSeluruhTampilan() {
+            const listCard = document.getElementById('app-list');
+            const listTable = document.getElementById('print-tabel-body');
+            
+            listCard.innerHTML = ''; // Kosongkan tampilan layar
+            listTable.innerHTML = ''; // Kosongkan tampilan tabel cetak
 
-        // Fungsi menampilkan tabel ke layar
-        function perbaruiTabel() {
-            const tbody = document.getElementById('tabel-body');
-            tbody.innerHTML = ''; 
+            if(dataKegiatan.length === 0) {
+                listCard.innerHTML = '<p style="text-align:center; color:#5f6368; margin-top:50px;">Belum ada log kegiatan. Tekan tombol + di bawah untuk menambah.</p>';
+            }
 
             dataKegiatan.forEach((item, index) => {
+                // A. Buat tampilan KARTU (Untuk Layar HP)
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span>🗓️ ${item.tanggal}</span>
+                        <span>⏰ ${item.waktu}</span>
+                    </div>
+                    <div class="card-title">Kegiatan #${index + 1}</div>
+                    <div class="card-desc">${item.deskripsi}</div>
+                    <div class="card-footer">
+                        <div>
+                            <span class="badge">Produk: ${item.produk || '-'}</span>
+                            <span class="badge" style="background:#f1f3f4; color:#3c4043;">Ket: ${item.ket || '-'}</span>
+                        </div>
+                        <button class="btn-hapus-card" onclick="hapusData(${index})">Hapus</button>
+                    </div>
+                `;
+                listCard.appendChild(card);
+
+                // B. Buat tampilan TABEL (Untuk dicetak)
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
@@ -256,15 +264,12 @@
                     <td class="teks-kiri">${item.deskripsi}</td>
                     <td>${item.produk}</td>
                     <td>${item.ket}</td>
-                    <td class="no-print">
-                        <button class="btn-aksi" onclick="hapusBaris(${index})">Hapus</button>
-                    </td>
                 `;
-                tbody.appendChild(tr);
+                listTable.appendChild(tr);
             });
         }
 
-        // Fungsi menambah data
+        // 3. Fungsi Menambah Data
         function tambahKegiatan() {
             const rawTanggal = document.getElementById('in-tanggal').value;
             const waktu = document.getElementById('in-waktu').value;
@@ -281,67 +286,46 @@
             if (rawTanggal) {
                 const bagian = rawTanggal.split('-'); 
                 const tanggalFormat = `${bagian[2]}/${bagian[1]}/${bagian[0]}`; 
-
                 const dateObj = new Date(rawTanggal);
                 const daftarHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const namaHari = daftarHari[dateObj.getDay()];
-
                 tanggalLengkap = `${namaHari}, ${tanggalFormat}`;
             }
 
+            // Simpan ke memori
             dataKegiatan.push({
-                tanggal: tanggalLengkap,
-                waktu: waktu,
-                deskripsi: deskripsi,
-                produk: produk,
-                ket: ket
+                tanggal: tanggalLengkap, waktu: waktu, deskripsi: deskripsi, produk: produk, ket: ket
             });
+            localStorage.setItem('dataLogPPL', JSON.stringify(dataKegiatan));
 
+            // Kosongkan form input
             document.getElementById('in-deskripsi').value = '';
             document.getElementById('in-ket').value = '';
             
-            // Panggil fungsi simpan setiap kali ada data baru yang masuk
-            simpanKeLocalStorage(); 
-            perbaruiTabel();
+            tutupModal();
+            renderSeluruhTampilan();
         }
 
-        // Fungsi menghapus data
-        function hapusBaris(index) {
-            // Meminta konfirmasi sebelum menghapus agar tidak terhapus tidak sengaja
-            if (confirm("Apakah Anda yakin ingin menghapus kegiatan ini?")) {
+        // 4. Fungsi Menghapus Data
+        function hapusData(index) {
+            if (confirm("Yakin ingin menghapus kegiatan ini?")) {
                 dataKegiatan.splice(index, 1);
-                
-                // Panggil fungsi simpan agar memori ikut terhapus
-                simpanKeLocalStorage(); 
-                perbaruiTabel();
+                localStorage.setItem('dataLogPPL', JSON.stringify(dataKegiatan));
+                renderSeluruhTampilan();
             }
         }
+
+        // 5. Fungsi untuk Mengendalikan Pop-up Form
+        function bukaModal() {
+            document.getElementById('modal-form').style.display = 'flex';
+        }
         
-        // LANGKAH 3: Memberikan data contoh HANYA jika data kosong (baru pertama kali buka)
-        if (dataKegiatan.length === 0) {
-            dataKegiatan.push({
-                tanggal: 'Selasa, 15/09/2026',
-                waktu: '08.00',
-                deskripsi: 'Pengantaran dan penyerahan mahasiswa PPL kepada pihak MIN 17 Aceh Barat.',
-                produk: 'Selesai',
-                ket: ''
-            });
-            simpanKeLocalStorage(); // Simpan contoh ini ke memori
+        function tutupModal() {
+            document.getElementById('modal-form').style.display = 'none';
         }
 
-        // Jalankan fungsi tampilkan tabel saat halaman pertama selesai dimuat
-        perbaruiTabel();
-        // Mendaftarkan Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                .then(registration => {
-                    console.log('ServiceWorker sukses didaftarkan dengan scope: ', registration.scope);
-                }, err => {
-                    console.log('Pendaftaran ServiceWorker gagal: ', err);
-                });
-            });
-        }
+        // Jalankan saat pertama dibuka
+        renderSeluruhTampilan();
 
     </script>
 </body>
