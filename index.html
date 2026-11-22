@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Harian PPL</title>
     <style>
+        <!-- Menghubungkan manifest -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Mengatur warna tema untuk bar status di HP Android -->
+    <meta name="theme-color" content="#4CAF50">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2965/2965306.png">
         /* Pengaturan Dasar Halaman */
         body {
             font-family: 'Times New Roman', Times, serif;
@@ -326,6 +331,17 @@
 
         // Jalankan fungsi tampilkan tabel saat halaman pertama selesai dimuat
         perbaruiTabel();
+        // Mendaftarkan Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker sukses didaftarkan dengan scope: ', registration.scope);
+                }, err => {
+                    console.log('Pendaftaran ServiceWorker gagal: ', err);
+                });
+            });
+        }
 
     </script>
 </body>
