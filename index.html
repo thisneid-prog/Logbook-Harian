@@ -124,7 +124,6 @@
 
     <div class="kontrol-panel no-print">
         <h3 style="margin-top:0;">Panel Input Kegiatan</h3>
-        <!-- Kode yang diperbarui: type="date" memunculkan kalender -->
         <input type="date" id="in-tanggal" style="font-family: Arial;">
         <input type="text" id="in-waktu" placeholder="Waktu (Misal: 08.00)" style="width: 120px;">
         <input type="text" id="in-deskripsi" placeholder="Deskripsi Kegiatan" style="width: 300px;">
@@ -222,15 +221,24 @@
                 return;
             }
 
-            // Memproses nilai kalender (YYYY-MM-DD) menjadi (DD/MM/YYYY)
-            let tanggalFormat = '';
+            // Memproses penamaan hari dan format tanggal
+            let tanggalLengkap = '';
             if (rawTanggal) {
-                const bagian = rawTanggal.split('-'); // Memecah tanggal berdasarkan tanda hubung
-                tanggalFormat = `${bagian[2]}/${bagian[1]}/${bagian[0]}`; // Menyusun ulang
+                // 1. Memecah tanggal menjadi DD/MM/YYYY
+                const bagian = rawTanggal.split('-'); 
+                const tanggalFormat = `${bagian[2]}/${bagian[1]}/${bagian[0]}`; 
+
+                // 2. Mencari tahu nama hari
+                const dateObj = new Date(rawTanggal);
+                const daftarHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const namaHari = daftarHari[dateObj.getDay()]; // getDay() menghasilkan angka 0 (Minggu) sampai 6 (Sabtu)
+
+                // 3. Menggabungkan nama hari dengan tanggal
+                tanggalLengkap = `${namaHari}, ${tanggalFormat}`;
             }
 
             dataKegiatan.push({
-                tanggal: tanggalFormat,
+                tanggal: tanggalLengkap,
                 waktu: waktu,
                 deskripsi: deskripsi,
                 produk: produk,
@@ -248,7 +256,7 @@
         }
         
         dataKegiatan.push({
-            tanggal: '15/09/2026',
+            tanggal: 'Selasa, 15/09/2026',
             waktu: '08.00',
             deskripsi: 'Pengantaran dan penyerahan mahasiswa PPL kepada pihak MIN 17 Aceh Barat.',
             produk: 'Selesai',
