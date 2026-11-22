@@ -1,0 +1,16 @@
+{
+  "name": "Laporan Harian PPL",
+  "short_name": "Log PPL",
+  "description": "Aplikasi pencatatan laporan harian PPL Mahasiswa",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#e0e0e0",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2965/2965306.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
