@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Harian PPL</title>
     <style>
-        /* Tampilan dasar halaman (luar dokumen) */
         body {
-            font-family: 'Times New Roman', Times, serif; /* Font resmi standar makalah */
+            font-family: 'Times New Roman', Times, serif;
             background-color: #e0e0e0;
             margin: 0;
             padding: 20px;
@@ -16,13 +15,12 @@
             align-items: center;
         }
 
-        /* Panel Kendali untuk menambah data (Disembunyikan saat dicetak) */
         .kontrol-panel {
             background: white;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-            width: 210mm; /* Menyamakan lebar dengan kertas */
+            width: 210mm;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             font-family: Arial, sans-serif;
             box-sizing: border-box;
@@ -48,17 +46,15 @@
         .kontrol-panel button.print-btn { background-color: #2196F3; }
         .kontrol-panel button:hover { opacity: 0.8; }
 
-        /* Tampilan Kertas Dokumen (Meniru A4) */
         .kertas-dokumen {
             background: white;
-            width: 210mm;      /* Lebar standar A4 */
-            min-height: 297mm; /* Tinggi standar A4 */
-            padding: 20mm;     /* Jarak margin dalam kertas */
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
             box-sizing: border-box;
         }
 
-        /* Desain Judul */
         .judul {
             text-align: center;
             font-weight: bold;
@@ -66,21 +62,18 @@
             margin-bottom: 30px;
         }
 
-        /* Desain Informasi Mahasiswa (Grid agar rapi) */
         .info-header {
             display: grid;
-            grid-template-columns: 100px 15px auto; /* Kolom: Label, Titik Dua, Isi */
+            grid-template-columns: 100px 15px auto;
             row-gap: 5px;
             margin-bottom: 20px;
         }
         
-        /* Memberi warna latar transparan saat teks bisa diedit agar pengguna tahu */
         [contenteditable="true"]:hover {
             background-color: #ffffcc;
             cursor: text;
         }
 
-        /* Desain Tabel Utama */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -94,10 +87,8 @@
             vertical-align: top;
         }
         
-        /* Meratakan teks deskripsi ke kiri seperti pada gambar */
         .teks-kiri { text-align: left; }
 
-        /* Desain Tombol Aksi dalam tabel */
         .btn-aksi {
             background-color: #f44336;
             color: white;
@@ -108,24 +99,22 @@
             font-size: 12px;
         }
 
-        /* Desain Area Tanda Tangan */
         .tanda-tangan {
             display: flex;
-            justify-content: space-between; /* Memisah ke kiri dan kanan */
+            justify-content: space-between;
             margin-top: 30px;
             text-align: center;
         }
         .ttd-box { width: 250px; }
-        .ttd-spasi { margin-top: 80px; } /* Jarak untuk tanda tangan basah */
+        .ttd-spasi { margin-top: 80px; }
 
-        /* ATURAN PENCETAKAN (Print) */
         @media print {
-            .no-print { display: none !important; } /* Sembunyikan tombol & panel */
+            .no-print { display: none !important; }
             body { background: white; padding: 0; margin: 0; }
             .kertas-dokumen { 
                 box-shadow: none; 
                 width: 100%; 
-                padding: 10mm; /* Sesuaikan margin saat mencetak */
+                padding: 10mm;
             }
             [contenteditable="true"]:hover { background-color: transparent; }
         }
@@ -133,10 +122,10 @@
 </head>
 <body>
 
-    <!-- PANEL KENDALI (Tidak ikut tercetak) -->
     <div class="kontrol-panel no-print">
         <h3 style="margin-top:0;">Panel Input Kegiatan</h3>
-        <input type="text" id="in-tanggal" placeholder="Hari/Tanggal (Misal: 15/09/2026)">
+        <!-- LANGKAH 1: Mengubah type="text" menjadi type="date" pada input di bawah ini -->
+        <input type="date" id="in-tanggal" style="font-family: Arial;">
         <input type="text" id="in-waktu" placeholder="Waktu (Misal: 08.00)" style="width: 120px;">
         <input type="text" id="in-deskripsi" placeholder="Deskripsi Kegiatan" style="width: 300px;">
         <input type="text" id="in-produk" placeholder="Produk (Misal: Selesai)" value="Selesai" style="width: 120px;">
@@ -145,12 +134,8 @@
         <br>
         <button onclick="tambahKegiatan()">+ Tambah Baris Kegiatan</button>
         <button onclick="window.print()" class="print-btn">🖨️ Cetak Dokumen</button>
-        <p style="font-size: 12px; color: #555; margin-bottom: 0;">
-            <em>*Tips: Anda dapat mengubah Nama, NIM, dan Tanda tangan dengan mengeklik langsung pada teks di dokumen kertas di bawah.</em>
-        </p>
     </div>
 
-    <!-- HALAMAN DOKUMEN -->
     <div class="kertas-dokumen">
         <div class="judul">LEMBAR LAPORAN HARIAN MAHASISWA PPL</div>
 
@@ -174,12 +159,10 @@
                 </tr>
             </thead>
             <tbody id="tabel-body">
-                <!-- Baris tabel akan ditambahkan di sini oleh JavaScript -->
             </tbody>
         </table>
 
         <div class="tanda-tangan">
-            <!-- Tanda Tangan Kiri -->
             <div class="ttd-box">
                 <div contenteditable="true">
                     Mengetahui,<br>
@@ -190,11 +173,9 @@
                     NIP. 197306061999051001
                 </div>
             </div>
-
-            <!-- Tanda Tangan Kanan -->
             <div class="ttd-box">
                 <div contenteditable="true">
-                    Meulaboh, <span id="tgl-cetak">17 September 2026</span><br>
+                    Meulaboh, <span contenteditable="true">17 September 2026</span><br>
                     Guru Pamong
                 </div>
                 <div class="ttd-spasi contenteditable-true" contenteditable="true">
@@ -205,21 +186,17 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT: Logika Aplikasi -->
     <script>
-        // Array untuk menyimpan data kegiatan
         let dataKegiatan = [];
 
-        // Fungsi untuk merender ulang isi tabel berdasarkan dataKegiatan
         function perbaruiTabel() {
             const tbody = document.getElementById('tabel-body');
-            tbody.innerHTML = ''; // Kosongkan tabel saat ini
+            tbody.innerHTML = ''; 
 
             dataKegiatan.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                
                 tr.innerHTML = `
-                    <td>${index + 1}</td> <!-- Nomor berurut otomatis -->
+                    <td>${index + 1}</td>
                     <td>${item.tanggal}</td>
                     <td>${item.waktu}</td>
                     <td class="teks-kiri">${item.deskripsi}</td>
@@ -233,45 +210,50 @@
             });
         }
 
-        // Fungsi untuk mengambil data dari panel input dan memasukkannya ke tabel
         function tambahKegiatan() {
-            const tanggal = document.getElementById('in-tanggal').value;
+            // Mengambil nilai asli dari input kalender (Format: YYYY-MM-DD)
+            const rawTanggal = document.getElementById('in-tanggal').value;
             const waktu = document.getElementById('in-waktu').value;
             const deskripsi = document.getElementById('in-deskripsi').value;
             const produk = document.getElementById('in-produk').value;
             const ket = document.getElementById('in-ket').value;
 
-            // Pastikan deskripsi minimal diisi
             if (deskripsi.trim() === '') {
                 alert("Harap isi deskripsi kegiatan!");
                 return;
             }
 
-            // Tambahkan data ke array
+            // LANGKAH 2: Memformat tanggal agar menjadi DD/MM/YYYY
+            let tanggalFormat = '';
+            if (rawTanggal) {
+                // Memecah teks berdasarkan tanda hubung (-)
+                const bagian = rawTanggal.split('-'); 
+                // bagian[0] adalah Tahun, bagian[1] adalah Bulan, bagian[2] adalah Tanggal
+                // Menyusunnya kembali dengan garis miring (/)
+                tanggalFormat = `${bagian[2]}/${bagian[1]}/${bagian[0]}`;
+            }
+
             dataKegiatan.push({
-                tanggal: tanggal,
+                tanggal: tanggalFormat,
                 waktu: waktu,
                 deskripsi: deskripsi,
                 produk: produk,
                 ket: ket
             });
 
-            // Bersihkan form (kecuali produk karena biasanya selalu 'Selesai')
-            document.getElementById('in-tanggal').value = '';
-            document.getElementById('in-waktu').value = '';
+            // Mengosongkan form (Kecuali tanggal dan waktu agar lebih cepat jika menginput banyak data di hari yang sama)
             document.getElementById('in-deskripsi').value = '';
             document.getElementById('in-ket').value = '';
 
             perbaruiTabel();
         }
 
-        // Fungsi untuk menghapus baris tabel
         function hapusBaris(index) {
-            dataKegiatan.splice(index, 1); // Hapus 1 item dari array
-            perbaruiTabel(); // Perbarui tampilan tabel
+            dataKegiatan.splice(index, 1);
+            perbaruiTabel();
         }
         
-        // Opsional: Isi satu data awal sebagai contoh saat pertama dibuka
+        // Data contoh
         dataKegiatan.push({
             tanggal: '15/09/2026',
             waktu: '08.00',
